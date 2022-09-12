@@ -80,7 +80,7 @@ $(document).ready(function () {
                         }, 1000, function () {
                             showTips('<strong>这对你而言就是这么困难么？</strong>');
                             setTimeout(function () {
-                                window.location = 'https://www.baidu.com/s?ch=3&ie=utf-8&wd=' + encodeURIComponent(kw);
+                                window.location = 'https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&tn=luhuinet&wd=' + encodeURIComponent(kw);
                             }, 2000);
                         });
                     }
