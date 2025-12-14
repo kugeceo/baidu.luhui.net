@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>luhui jsearch 鲁虺聚搜百度 - 一站式多平台搜索鲁虺联合搜索引擎群 http://search.luhui.net 鲁虺群搜索|网页搜索|游戏搜索|音乐搜索|磁力搜索|影视搜索|软件搜索|图片搜索|新闻搜索|地图搜索|论坛搜索|小说搜索|Flash搜索|黄页搜索|企业文档搜索让你体验干净、安全、可信任的一站式搜索引擎！</title>
+<meta name="keywords" content="鲁虺搜索引擎群,热门搜索,网页搜索,游戏搜索,音乐搜索,影视搜索,软件搜索,图片搜索,新闻搜索,地图搜索,论坛搜索,小说搜索,Flash搜索,黄页搜索,企业搜索最近热搜词,群搜天下小" />
+<meta name="description" content="我们更专注于互联网免费资源的大数据搜索,鲁虺搜索群是一个干净无竞价排名广告的搜索引擎框架，提供网页搜索、游戏搜索、音乐搜索、影视搜索、软件搜索、图片搜索、新闻搜索、地图搜索、论坛搜索、小说搜索、Flash搜索、黄页搜索、企业搜索以及行业网站大全,网站搜索优化。鲁虺文化网为您便捷快速查找信息提供强劲动力！" />
+<meta name="Copyright" content="鲁虺文化网版权所有" />
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind自定义配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4096ff',
+                        secondary: '#667085',
+                        light: '#f9fafb',
+                        dark: '#1d2129',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .bg-blur {
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+            }
+            .transition-all-300 {
+                transition: all 0.3s ease;
+            }
+            .result-card-hover {
+                @apply hover:shadow-lg hover:border-primary/50 transition-all-300;
+            }
+        }
+
+        /* 基础样式 */
+        body {
+            min-height: 100vh;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #888;
+        }
+    </style>
+</head>
+<body class="bg-light text-dark">
+    <!-- 背景遮罩层（提升文字可读性） -->
+    <div class="fixed inset-0 bg-black/20 z-0"></div>
+
+    <!-- 页面容器 -->
+    <div class="relative z-10 min-h-screen flex flex-col">
+        <!-- 顶部导航栏 -->
+        <header class="sticky top-0 bg-light/80 bg-blur border-b border-gray-200 z-50">
+            <div class="container mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center mb-3 md:mb-0">
+                    <h1 class="text-2xl font-bold text-primary flex items-center">
+                        <i class="fas fa-search mr-2"></i>
+                        <span>luhui jSearch 鲁虺聚搜百度</span>
+                    </h1>
+                </div>
+
+                <!-- 功能按钮区 -->
+                <div class="flex items-center gap-3">
+                    <!-- 天气预报按钮 -->
+                    <button id="weatherBtn" class="p-2 rounded-full hover:bg-gray-100 transition-all-300" title="天气预报">
+                        <i class="fas fa-cloud-sun text-secondary"></i>
+                    </button>
+                    <!-- 背景设置按钮 -->
+                    <button id="bgSettingBtn" class="p-2 rounded-full hover:bg-gray-100 transition-all-300" title="背景设置">
+                        <i class="fas fa-palette text-secondary"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 搜索区域 -->
+        <section class="container mx-auto px-4 py-8 flex-grow flex flex-col items-center justify-center">
+            <!-- 搜索框容器 -->
+            <div class="w-full max-w-3xl mb-8">
+                <!-- 搜索分类切换 -->
+                <div class="flex flex-wrap mb-2 gap-1">
+                    <button class="search-type-btn px-3 py-1 rounded-full text-sm bg-primary text-white" data-type="default">默认首选</button>
+                    <button class="search-type-btn px-3 py-1 rounded-full text-sm bg-gray-100 hover:bg-primary/10 transition-all-300" data-type="web">网页搜索</button>
+                    <button class="search-type-btn px-3 py-1 rounded-full text-sm bg-gray-100 hover:bg-primary/10 transition-all-300" data-type="music">音乐</button>
+                    <button class="search-type-btn px-3 py-1 rounded-full text-sm bg-gray-100 hover:bg-primary/10 transition-all-300" data-type="image">图片</button>
+                    <button class="search-type-btn px-3 py-1 rounded-full text-sm bg-gray-100 hover:bg-primary/10 transition-all-300" data-type="video">视频</button>
+                    <button class="search-type-btn px-3 py-1 rounded-full text-sm bg-gray-100 hover:bg-primary/10 transition-all-300" data-type="shopping">购物</button>
+                    <button class="search-type-btn px-3 py-1 rounded-full text-sm bg-gray-100 hover:bg-primary/10 transition-all-300" data-type="dict">词典</button>
+                    <button class="search-type-btn px-3 py-1 rounded-full text-sm bg-gray-100 hover:bg-primary/10 transition-all-300" data-type="magnet">磁力</button>
+                    <button class="search-type-btn px-3 py-1 rounded-full text-sm bg-gray-100 hover:bg-primary/10 transition-all-300" data-type="doc">文档</button>
+                    <button class="search-type-btn px-3 py-1 rounded-full text-sm bg-gray-100 hover:bg-primary/10 transition-all-300" data-type="news">新闻</button>
+                    <button class="search-type-btn px-3 py-1 rounded-full text-sm bg-gray-100 hover:bg-primary/10 transition-all-300" data-type="map">地图</button>
+                    <button class="search-type-btn px-3 py-1 rounded-full text-sm bg-gray-100 hover:bg-primary/10 transition-all-300" data-type="software">软件</button>
+                </div>
+
+                <!-- 搜索框 -->
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        class="w-full px-4 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary text-lg"
+                        placeholder="请输入搜索关键词..."
+                    >
+                    <button id="searchBtn" class="absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-white px-6 py-2 rounded-full hover:bg-primary/90 transition-all-300">
+                        <i class="fas fa-search mr-1"></i> 搜索
+                    </button>
+                </div>
+            </div>
+
+            <!-- 搜索结果区域 -->
+            <div id="searchResults" class="w-full max-w-5xl bg-white/80 bg-blur rounded-xl p-4 md:p-6 shadow-md">
+                <!-- 初始提示 -->
+                <div id="initialTip" class="py-16 text-center text-secondary">
+                    <i class="fas fa-search text-4xl mb-4 opacity-50"></i>
+                    <p class="text-lg">输入关键词并选择分类，开始一站式搜索</p>
+                </div>
+
+                <!-- 结果列表（默认隐藏） -->
+                <div id="resultsList" class="hidden space-y-4">
+                    <!-- 结果项将通过JS动态生成 -->
+                </div>
+
+                <!-- 分页控件（默认隐藏） -->
+                <div id="pagination" class="hidden mt-8 flex justify-center items-center gap-2">
+                    <button id="prevPage" class="px-3 py-1 rounded border border-gray-300 hover:bg-primary hover:text-white transition-all-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-chevron-left"></i> 上一页
+                    </button>
+                    <span id="pageInfo" class="px-3 py-1 text-secondary"></span>
+                    <button id="nextPage" class="px-3 py-1 rounded border border-gray-300 hover:bg-primary hover:text-white transition-all-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                        下一页 <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="bg-dark/80 bg-blur text-white py-4">
+            <div class="container mx-auto px-4 text-center text-sm opacity-80">
+                <p> Copyright &copy; 2004-01-11 <a href="/?luhui.net" target="_blank">luhui.net</a></p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 天气预报弹窗 -->
+    <div id="weatherModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+        <div class="absolute inset-0 bg-black/50" id="weatherModalOverlay"></div>
+        <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-md p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-primary">实时天气预报</h3>
+                <button id="closeWeatherModal" class="text-gray-500 hover:text-dark transition-all-300">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div id="weatherLoading" class="py-8 text-center">
+                <i class="fas fa-spinner fa-spin text-2xl text-primary mb-2"></i>
+                <p>正在获取天气数据...</p>
+            </div>
+            <div id="weatherContent" class="hidden">
+                <!-- 天气内容将通过JS动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 背景设置弹窗 -->
+    <div id="bgSettingModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+        <div class="absolute inset-0 bg-black/50" id="bgSettingModalOverlay"></div>
+        <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-lg p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-primary">背景设置</h3>
+                <button id="closeBgSettingModal" class="text-gray-500 hover:text-dark transition-all-300">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <!-- 自动切换壁纸 -->
+                <div class="p-3 border rounded-lg">
+                    <h4 class="font-medium mb-2">自动切换壁纸</h4>
+                    <div class="flex gap-3">
+                        <button id="randomBgBtn" class="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-all-300">
+                            <i class="fas fa-random mr-1"></i> 随机壁纸
+                        </button>
+                        <button id="autoChangeBgBtn" class="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200 transition-all-300">
+                            <i class="fas fa-refresh mr-1"></i> 自动切换(5分钟)
+                        </button>
+                    </div>
+                    <p class="text-xs text-secondary mt-2">壁纸来源：Unsplash 免费高清壁纸</p>
+                </div>
+
+                <!-- 自定义背景 -->
+                <div class="p-3 border rounded-lg">
+                    <h4 class="font-medium mb-2">自定义背景</h4>
+                    <div class="space-y-3">
+                        <!-- 背景颜色 -->
+                        <div>
+                            <label class="block text-sm text-secondary mb-1">背景颜色</label>
+                            <input type="color" id="bgColorPicker" class="w-full h-10 border rounded cursor-pointer">
+                        </div>
+                        <!-- 背景图片 -->
+                        <div>
+                            <label class="block text-sm text-secondary mb-1">背景图片URL</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="bgImageUrl" class="flex-1 px-3 py-2 border rounded focus:outline-none focus:ring-1 focus:ring-primary" placeholder="输入图片URL...">
+                                <button id="setBgImageBtn" class="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-all-300">
+                                    应用
+                                </button>
+                            </div>
+                        </div>
+                        <!-- 重置背景 -->
+                        <button id="resetBgBtn" class="w-full px-4 py-2 bg-red-100 text-red-600 rounded hover:bg-red-200 transition-all-300">
+                            <i class="fas fa-undo mr-1"></i> 重置默认背景
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== 全局变量 ==========
+        let currentKeyword = '';      // 当前搜索关键词
+        let currentPage = 1;         // 当前页码
+        let currentType = 'default'; // 当前搜索类型
+        let bgAutoChangeTimer = null;// 壁纸自动切换定时器
+        const PAGE_SIZE = 10;        // 每页结果数
+        const WEATHER_API = 'https://api.vvhan.com/api/weather?city='; // 天气API
+        const UNSPLASH_API = 'https://source.unsplash.com/random/1920x1080/?nature,landscape'; // 随机壁纸API
+
+        // ========== 初始化 ==========
+        document.addEventListener('DOMContentLoaded', () => {
+            // 从URL参数加载初始状态
+            loadFromURLParams();
+            // 初始化背景
+            initBackground();
+            // 绑定事件监听
+            bindEvents();
+            // 如果URL有关键词，自动搜索
+            if (currentKeyword) {
+                performSearch();
+            }
+        });
+
+        // ========== URL参数处理 ==========
+        // 从URL参数加载状态
+        function loadFromURLParams() {
+            const params = new URLSearchParams(window.location.search);
+            currentKeyword = params.get('keyword') || '';
+            currentPage = parseInt(params.get('page')) || 1;
+            currentType = params.get('type') || 'default';
+
+            // 更新页面UI
+            document.getElementById('searchInput').value = currentKeyword;
+            // 激活当前分类按钮
+            document.querySelectorAll('.search-type-btn').forEach(btn => {
+                if (btn.dataset.type === currentType) {
+                    btn.classList.add('bg-primary', 'text-white');
+                    btn.classList.remove('bg-gray-100', 'hover:bg-primary/10');
+                } else {
+                    btn.classList.remove('bg-primary', 'text-white');
+                    btn.classList.add('bg-gray-100', 'hover:bg-primary/10');
+                }
+            });
+        }
+
+        // 更新URL参数（不刷新页面）
+        function updateURLParams() {
+            const params = new URLSearchParams();
+            if (currentKeyword) params.set('keyword', currentKeyword);
+            if (currentPage > 1) params.set('page', currentPage);
+            if (currentType !== 'default') params.set('type', currentType);
+            
+            const newURL = window.location.pathname + (params.toString() ? `?${params.toString()}` : '');
+            window.history.pushState({}, '', newURL);
+        }
+
+        // ========== 搜索功能 ==========
+        // 执行搜索
+        function performSearch() {
+            if (!currentKeyword.trim()) {
+                alert('请输入搜索关键词！');
+                document.getElementById('searchInput').focus();
+                return;
+            }
+
+            // 隐藏初始提示，显示结果区域
+            document.getElementById('initialTip').classList.add('hidden');
+            document.getElementById('resultsList').classList.remove('hidden');
+            document.getElementById('pagination').classList.remove('hidden');
+
+            // 生成模拟搜索结果（实际项目中替换为真实API请求）
+            generateMockResults();
+            // 更新分页信息
+            updatePagination();
+            // 更新URL
+            updateURLParams();
+        }
+
+        // 生成模拟搜索结果
+        function generateMockResults() {
+            const resultsList = document.getElementById('resultsList');
+            resultsList.innerHTML = '';
+
+            // 模拟不同分类的结果链接
+            const typeDomains = {
+                default: 'search.luhui.net',
+                web: 'www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&tn=luhuinet&wd=',
+                music: 'music.163.com/search/?s=',
+                image: 'image.baidu.com/search/index?tn=baiduimage&word=',
+                video: 'v.qq.com/x/search/?q=',
+                shopping: 's.taobao.com/search?q=',
+                dict: 'dict.baidu.com/s?wd=',
+                magnet: 'www.bing.com/search?q=',
+                doc: 'wenku.baidu.com/search?word=',
+                news: 'news.baidu.com/search?tn=news&word=',
+                map: 'map.baidu.com/mobile/webapp/search/search/qt=s&wd=',
+                software: 'pc.qq.com/search.html#!keyword='
+            };
+
+            // 生成结果项
+            for (let i = 0; i < PAGE_SIZE; i++) {
+                const itemIndex = (currentPage - 1) * PAGE_SIZE + i + 1;
+                const resultUrl = `${typeDomains[currentType]}${encodeURIComponent(currentKeyword)}&page=${currentPage}`;
+                const thumbnailUrl = `https://mini.s-shot.ru/1024x768/400/jpeg/?${resultUrl}`;
+
+                const resultItem = document.createElement('div');
+                resultItem.className = 'flex flex-col md:flex-row gap-4 p-4 border rounded-lg result-card-hover';
+                
+                resultItem.innerHTML = `
+                    <!-- 缩略图 -->
+                    <div class="w-full md:w-48 h-32 bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                        <img src="${thumbnailUrl}" alt="结果缩略图" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/400x300?text=暂无缩略图'">
+                    </div>
+                    <!-- 结果内容 -->
+                    <div class="flex-1">
+                        <h3 class="text-lg font-medium text-primary mb-1">
+                            <a href="${resultUrl}" target="_blank" class="hover:underline">${currentKeyword} - 搜索结果 ${itemIndex}</a>
+                        </h3>
+                        <p class="text-secondary text-sm mb-2">${resultUrl}</p>
+                        <p class="text-gray-600">这是${currentType === 'default' ? '默认首选' : currentType}分类下的搜索结果描述，包含关键词「${currentKeyword}」的相关内容，第${currentPage}页第${i+1}条结果。</p>
+                    </div>
+                `;
+
+                resultsList.appendChild(resultItem);
+            }
+        }
+
+        // 更新分页控件
+        function updatePagination() {
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+            const pageInfo = document.getElementById('pageInfo');
+
+            // 更新页码信息
+            pageInfo.textContent = `第 ${currentPage} 页，共 10 页`;
+
+            // 禁用/启用分页按钮
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= 10; // 模拟总页数10
+        }
+
+        // ========== 背景功能 ==========
+        // 初始化背景
+        function initBackground() {
+            // 从本地存储加载背景设置
+            const savedBg = localStorage.getItem('jSearchBg');
+            if (savedBg) {
+                const bgData = JSON.parse(savedBg);
+                if (bgData.type === 'color') {
+                    document.body.style.backgroundImage = 'none';
+                    document.body.style.backgroundColor = bgData.value;
+                } else if (bgData.type === 'image') {
+                    document.body.style.backgroundImage = `url(${bgData.value})`;
+                    document.body.style.backgroundColor = '#f9fafb';
+                }
+            } else {
+                // 默认随机壁纸
+                setRandomBackground();
+            }
+        }
+
+        // 设置随机壁纸
+        function setRandomBackground() {
+            const randomUrl = `${UNSPLASH_API}&t=${Date.now()}`; // 加时间戳避免缓存
+            document.body.style.backgroundImage = `url(${randomUrl})`;
+            document.body.style.backgroundColor = '#f9fafb';
+            
+            // 保存到本地存储
+            localStorage.setItem('jSearchBg', JSON.stringify({
+                type: 'image',
+                value: randomUrl
+            }));
+        }
+
+        // 设置自定义背景颜色
+        function setCustomBgColor(color) {
+            document.body.style.backgroundImage = 'none';
+            document.body.style.backgroundColor = color;
+            
+            // 保存到本地存储
+            localStorage.setItem('jSearchBg', JSON.stringify({
+                type: 'color',
+                value: color
+            }));
+        }
+
+        // 设置自定义背景图片
+        function setCustomBgImage(url) {
+            if (!url.trim()) {
+                alert('请输入有效的图片URL！');
+                return;
+            }
+            document.body.style.backgroundImage = `url(${url})`;
+            document.body.style.backgroundColor = '#f9fafb';
+            
+            // 保存到本地存储
+            localStorage.setItem('jSearchBg', JSON.stringify({
+                type: 'image',
+                value: url
+            }));
+        }
+
+        // 重置背景为默认
+        function resetBackground() {
+            localStorage.removeItem('jSearchBg');
+            setRandomBackground();
+        }
+
+        // 开启/关闭壁纸自动切换
+        function toggleAutoChangeBg() {
+            const btn = document.getElementById('autoChangeBgBtn');
+            if (bgAutoChangeTimer) {
+                // 停止自动切换
+                clearInterval(bgAutoChangeTimer);
+                bgAutoChangeTimer = null;
+                btn.innerHTML = '<i class="fas fa-refresh mr-1"></i> 自动切换(5分钟)';
+                btn.classList.remove('bg-primary', 'text-white');
+                btn.classList.add('bg-gray-100');
+                alert('已关闭壁纸自动切换');
+            } else {
+                // 开启自动切换（5分钟一次）
+                bgAutoChangeTimer = setInterval(setRandomBackground, 5 * 60 * 1000);
+                btn.innerHTML = '<i class="fas fa-pause mr-1"></i> 停止自动切换';
+                btn.classList.remove('bg-gray-100');
+                btn.classList.add('bg-primary', 'text-white');
+                alert('已开启壁纸自动切换（每5分钟更换一次）');
+            }
+        }
+
+        // ========== 天气预报功能 ==========
+        // 获取天气数据
+        async function getWeatherData(city = '北京') {
+            try {
+                const response = await fetch(`${WEATHER_API}${encodeURIComponent(city)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderWeatherData(data.data);
+                } else {
+                    document.getElementById('weatherLoading').innerHTML = '<p class="text-red-500">获取天气数据失败，请稍后重试</p>';
+                }
+            } catch (error) {
+                console.error('天气API请求失败：', error);
+                document.getElementById('weatherLoading').innerHTML = '<p class="text-red-500">获取天气数据失败，请检查网络</p>';
+            }
+        }
+
+        // 渲染天气数据
+        function renderWeatherData(weatherData) {
+            const weatherContent = document.getElementById('weatherContent');
+            document.getElementById('weatherLoading').classList.add('hidden');
+            weatherContent.classList.remove('hidden');
+
+            // 天气图标映射
+            const weatherIcons = {
+                '晴': 'fas fa-sun',
+                '多云': 'fas fa-cloud',
+                '阴': 'fas fa-cloud-meatball',
+                '雨': 'fas fa-cloud-rain',
+                '雪': 'fas fa-snowflake',
+                '风': 'fas fa-wind',
+                '雷': 'fas fa-bolt'
+            };
+
+            // 获取匹配的图标
+            function getWeatherIcon(text) {
+                for (const [key, icon] of Object.entries(weatherIcons)) {
+                    if (text.includes(key)) return icon;
+                }
+                return 'fas fa-cloud';
+            }
+
+            weatherContent.innerHTML = `
+                <div class="text-center mb-4">
+                    <h4 class="text-2xl font-bold">${weatherData.city}</h4>
+                    <div class="flex items-center justify-center gap-3 mt-2">
+                        <i class="${getWeatherIcon(weatherData.type)} text-4xl text-primary"></i>
+                        <div>
+                            <p class="text-3xl font-bold">${weatherData.temp}°C</p>
+                            <p class="text-secondary">${weatherData.type}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mt-4">
+                    <div class="p-2 border rounded-lg text-center">
+                        <p class="text-sm text-secondary">风向</p>
+                        <p class="font-medium">${weatherData.fengxiang}</p>
+                    </div>
+                    <div class="p-2 border rounded-lg text-center">
+                        <p class="text-sm text-secondary">风力</p>
+                        <p class="font-medium">${weatherData.fengli}</p>
+                    </div>
+                    <div class="p-2 border rounded-lg text-center">
+                        <p class="text-sm text-secondary">湿度</p>
+                        <p class="font-medium">${weatherData.shidu}</p>
+                    </div>
+                    <div class="p-2 border rounded-lg text-center">
+                        <p class="text-sm text-secondary">更新时间</p>
+                        <p class="font-medium">${weatherData.time}</p>
+                    </div>
+                </div>
+                <div class="mt-4 p-3 bg-primary/5 rounded-lg">
+                    <p class="text-sm text-secondary">${weatherData.tips}</p>
+                </div>
+            `;
+        }
+
+        // ========== 事件绑定 ==========
+        function bindEvents() {
+            // 搜索按钮点击
+            document.getElementById('searchBtn').addEventListener('click', () => {
+                currentKeyword = document.getElementById('searchInput').value.trim();
+                currentPage = 1; // 新搜索重置页码
+                performSearch();
+            });
+
+            // 搜索框回车事件
+            document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    document.getElementById('searchBtn').click();
+                }
+            });
+
+            // 搜索分类切换
+            document.querySelectorAll('.search-type-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // 更新分类样式
+                    document.querySelectorAll('.search-type-btn').forEach(b => {
+                        b.classList.remove('bg-primary', 'text-white');
+                        b.classList.add('bg-gray-100', 'hover:bg-primary/10');
+                    });
+                    btn.classList.add('bg-primary', 'text-white');
+                    btn.classList.remove('bg-gray-100', 'hover:bg-primary/10');
+                    
+                    // 更新当前分类并重新搜索
+                    currentType = btn.dataset.type;
+                    currentPage = 1; // 切换分类重置页码
+                    if (currentKeyword) {
+                        performSearch();
+                    } else {
+                        updateURLParams();
+                    }
+                });
+            });
+
+            // 分页按钮事件
+            document.getElementById('prevPage').addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    performSearch();
+                }
+            });
+
+            document.getElementById('nextPage').addEventListener('click', () => {
+                if (currentPage < 10) { // 模拟总页数10
+                    currentPage++;
+                    performSearch();
+                }
+            });
+
+            // 天气预报弹窗
+            document.getElementById('weatherBtn').addEventListener('click', () => {
+                document.getElementById('weatherModal').classList.remove('hidden');
+                getWeatherData(); // 默认获取北京天气
+            });
+
+            document.getElementById('closeWeatherModal').addEventListener('click', () => {
+                document.getElementById('weatherModal').classList.add('hidden');
+            });
+
+            document.getElementById('weatherModalOverlay').addEventListener('click', () => {
+                document.getElementById('weatherModal').classList.add('hidden');
+            });
+
+            // 背景设置弹窗
+            document.getElementById('bgSettingBtn').addEventListener('click', () => {
+                document.getElementById('bgSettingModal').classList.remove('hidden');
+                // 初始化颜色选择器为当前背景色
+                const bgColor = getComputedStyle(document.body).backgroundColor;
+                document.getElementById('bgColorPicker').value = rgbToHex(bgColor);
+            });
+
+            document.getElementById('closeBgSettingModal').addEventListener('click', () => {
+                document.getElementById('bgSettingModal').classList.add('hidden');
+            });
+
+            document.getElementById('bgSettingModalOverlay').addEventListener('click', () => {
+                document.getElementById('bgSettingModal').classList.add('hidden');
+            });
+
+            // 背景设置按钮事件
+            document.getElementById('randomBgBtn').addEventListener('click', setRandomBackground);
+            document.getElementById('autoChangeBgBtn').addEventListener('click', toggleAutoChangeBg);
+            document.getElementById('bgColorPicker').addEventListener('input', (e) => {
+                setCustomBgColor(e.target.value);
+            });
+            document.getElementById('setBgImageBtn').addEventListener('click', () => {
+                const url = document.getElementById('bgImageUrl').value.trim();
+                setCustomBgImage(url);
+            });
+            document.getElementById('resetBgBtn').addEventListener('click', resetBackground);
+        }
+
+        // ========== 工具函数 ==========
+        // RGB转十六进制颜色
+        function rgbToHex(rgb) {
+            const rgbMatch = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+            if (!rgbMatch) return '#ffffff';
+            
+            const hex = (x) => {
+                return ("0" + parseInt(x).toString(16)).slice(-2);
+            };
+            return `#${hex(rgbMatch[1])}${hex(rgbMatch[2])}${hex(rgbMatch[3])}`;
+        }
+    </script>
+</body>
+</html>
