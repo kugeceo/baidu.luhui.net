@@ -1,14 +1,12 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>luhui jsearch 鲁虺聚搜百度 - 一站式多平台搜索鲁虺联合搜索引擎群 http://search.luhui.net 鲁虺群搜索|网页搜索|游戏搜索|音乐搜索|磁力搜索|影视搜索|软件搜索|图片搜索|新闻搜索|地图搜索|论坛搜索|小说搜索|Flash搜索|黄页搜索|企业文档搜索让你体验干净、安全、可信任的一站式搜索引擎！</title> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>luhui jsearch 鲁虺聚搜百度 - 一站式多平台搜索鲁虺联合搜索引擎群 http://search.luhui.net 鲁虺群搜索|网页搜索|游戏搜索|音乐搜索|磁力搜索|影视搜索|软件搜索|图片搜索|新闻搜索|地图搜索|论坛搜索|小说搜索|Flash搜索|黄页搜索|企业文档搜索让你体验干净、安全、可信任的一站式搜索引擎！</title>
 <meta name="keywords" content="鲁虺搜索引擎群,热门搜索,网页搜索,游戏搜索,音乐搜索,影视搜索,软件搜索,图片搜索,新闻搜索,地图搜索,论坛搜索,小说搜索,Flash搜索,黄页搜索,企业搜索最近热搜词,群搜天下小" />
 <meta name="description" content="我们更专注于互联网免费资源的大数据搜索,鲁虺搜索群是一个干净无竞价排名广告的搜索引擎框架，提供网页搜索、游戏搜索、音乐搜索、影视搜索、软件搜索、图片搜索、新闻搜索、地图搜索、论坛搜索、小说搜索、Flash搜索、黄页搜索、企业搜索以及行业网站大全,网站搜索优化。鲁虺文化网为您便捷快速查找信息提供强劲动力！" />
 <meta name="Copyright" content="鲁虺文化网版权所有" />
-	<!-- 初始标题 -->
     <!-- 引入Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入Font Awesome图标 -->
@@ -87,7 +85,7 @@
                 <div class="flex items-center mb-3 md:mb-0">
                     <h1 class="text-2xl font-bold text-primary flex items-center">
                         <i class="fas fa-search mr-2"></i>
-                        <span>鲁虺聚搜百度</span>
+                        <span>luhui jSearch 鲁虺聚搜百度</span>
                     </h1>
                 </div>
 
@@ -254,190 +252,8 @@
         let currentType = 'default'; // 当前搜索类型
         let bgAutoChangeTimer = null;// 壁纸自动切换定时器
         const PAGE_SIZE = 10;        // 每页结果数
-        // 替换为稳定的天气预报接口（免KEY，无跨域）
-        const WEATHER_API = 'https://www.weather.com.cn/data/sk/101010100.html'; // 北京城市代码，可扩展
+        const WEATHER_API = 'https://api.vvhan.com/api/weather?city='; // 天气API
         const UNSPLASH_API = 'https://source.unsplash.com/random/1920x1080/?nature,landscape'; // 随机壁纸API
-
-        // 分类名称映射（用于标题和结果展示）
-        const typeNameMap = {
-            default: '默认首选',
-            web: '网页搜索',
-            music: '音乐搜索',
-            image: '图片搜索',
-            video: '视频搜索',
-            shopping: '购物搜索',
-            dict: '词典查询',
-            magnet: '磁力搜索',
-            doc: '文档搜索',
-            news: '新闻搜索',
-            map: '地图搜索',
-            software: '软件搜索'
-        };
-
-        // 模拟真实搜索结果数据（按分类区分）
-        const mockResultTemplates = {
-            web: [
-                "【{keyword}】- 百度百科 全面介绍{keyword}的定义、起源、应用及相关知识",
-                "{keyword}最新资讯 - 今日头条 2025年{keyword}相关热点事件汇总",
-                "{keyword}教程_零基础入门到精通 - 知乎专栏 详细讲解{keyword}使用方法",
-                "{keyword}下载_官方正版 - 官网地址 安全获取{keyword}安装包",
-                "{keyword}价格_2025最新报价 - 电商平台对比 性价比分析",
-                "{keyword}常见问题解答 - 专业论坛 解决{keyword}使用中遇到的问题",
-                "{keyword}行业报告_2025 - 权威机构发布 市场趋势分析",
-                "{keyword}对比评测 - 数码之家 多款{keyword}产品横向对比",
-                "{keyword}技巧分享 - 小红书 实用{keyword}使用小窍门",
-                "{keyword}历史沿革 - 维基百科 详细梳理{keyword}发展历程"
-            ],
-            music: [
-                "{keyword} - 周杰伦 单曲 网易云音乐 超高音质在线播放",
-                "{keyword} (Live) - 陈奕迅 演唱会版本 无损音质下载",
-                "{keyword} 钢琴版 - 纯音乐 舒缓放松 QQ音乐独家",
-                "{keyword} 翻唱版 - 网红歌手 抖音热门 酷狗音乐",
-                "{keyword} 伴奏 - 无和声版 适合K歌 全民K歌",
-                "{keyword} 歌词 - 完整版 带拼音标注 方便学唱",
-                "{keyword} 专辑 - 整张收录 包含10首经典曲目",
-                "{keyword} 铃声 - 30秒高潮版 免费下载",
-                "{keyword} 吉他谱 - 原版和弦 新手易上手",
-                "{keyword} 排行榜 - 音乐榜单 连续3周登顶"
-            ],
-            image: [
-                "{keyword} 高清壁纸 1920x1080 无水印下载",
-                "{keyword} 摄影作品 获奖作品 视觉中国正版",
-                "{keyword} 表情包 动态/静态 微信QQ通用",
-                "{keyword} 插画 手绘风格 二次元 高清图集",
-                "{keyword} 风景照 国内外知名景点 4K分辨率",
-                "{keyword} 产品图 多角度展示 电商专用",
-                "{keyword} 人物写真 明星/模特 专业拍摄",
-                "{keyword} 动漫截图 经典场景 无字幕版",
-                "{keyword} 设计素材 PNG透明底 免费商用",
-                "{keyword} 创意合成图 视觉特效 艺术创作"
-            ],
-            video: [
-                "{keyword} 教程视频 5分钟快速上手 B站高清",
-                "{keyword} 电影完整版 无删减 1080P在线观看",
-                "{keyword} 短视频合集 抖音/快手热门 搞笑瞬间",
-                "{keyword} 纪录片 央视出品 权威解读",
-                "{keyword} 直播回放 全程录像 重点片段标记",
-                "{keyword} 教学课程 系列视频 从入门到精通",
-                "{keyword} 赛事直播 实时转播 高清无卡顿",
-                "{keyword} MV 官方完整版 杜比音效",
-                "{keyword} 开箱视频 详细评测 优缺点分析",
-                "{keyword} 动画短片 原创制作 获奖作品"
-            ],
-            shopping: [
-                "{keyword} 官方旗舰店 正品保障 假一赔十",
-                "{keyword} 限时特惠 满200减50 优惠券领取",
-                "{keyword} 二手99新 性价比高 验货签收",
-                "{keyword} 套餐组合 买一送三 超值划算",
-                "{keyword} 海外代购 正品直邮 关税全包",
-                "{keyword} 定制服务 个性化设计 免费改稿",
-                "{keyword} 批发价 量大从优 厂家直供",
-                "{keyword} 试用装 免费领取 仅付运费",
-                "{keyword} 退换无忧 7天无理由 运费险",
-                "{keyword} 热销榜 TOP1 月销10万+"
-            ],
-            dict: [
-                "{keyword} 拼音 - {pinyin} 声调标注 发音示范",
-                "{keyword} 释义 - 基本义/引申义 例句解析",
-                "{keyword} 近义词/反义词 - 详细列表 用法区别",
-                "{keyword} 英文翻译 - 多种译法 场景举例",
-                "{keyword} 词性 - 名词/动词/形容词 语法说明",
-                "{keyword} 成语典故 - 出处 历史背景 用法",
-                "{keyword} 方言解释 - 各地方言说法 发音",
-                "{keyword} 网络释义 - 流行用法 饭圈/梗解释",
-                "{keyword} 繁简转换 - 简体/繁体 对比展示",
-                "{keyword} 字源 - 甲骨文/金文 演变过程"
-            ],
-            magnet: [
-                "{keyword} 高清资源 1080P 磁力链接 迅雷下载",
-                "{keyword} 软件合集 破解版 绿色版 无广告",
-                "{keyword} 电子书库 全格式 免费下载",
-                "{keyword} 音乐合集 无损音质 FLAC格式",
-                "{keyword} 游戏资源 完整版 免安装 直接玩",
-                "{keyword} 教程资料 PDF/视频 全套打包",
-                "{keyword} 电影合集 系列片 蓝光原盘",
-                "{keyword} 系统镜像 纯净版 无捆绑软件",
-                "{keyword} 设计素材 海量模板 商用无版权",
-                "{keyword} 学习资料 考研/考证 全套课程"
-            ],
-            doc: [
-                "{keyword} 毕业论文 范文参考 格式模板",
-                "{keyword} 行业报告 PDF完整版 数据可视化",
-                "{keyword} 合同模板 正规版 可编辑 Word格式",
-                "{keyword} 策划方案 通用模板 免费下载",
-                "{keyword} 技术文档 详细说明 操作手册",
-                "{keyword} 研究论文 核心期刊 知网收录",
-                "{keyword} 读书笔记 精华总结 思维导图",
-                "{keyword} 培训课件 PPT模板 动态效果",
-                "{keyword} 财务报表 模板 Excel 自动计算",
-                "{keyword} 简历模板 个性化 适配不同行业"
-            ],
-            news: [
-                "{keyword} 最新消息 2025年4月 官方发布",
-                "{keyword} 时政新闻 央视报道 权威解读",
-                "{keyword} 财经新闻 股市/基金 行情分析",
-                "{keyword} 科技新闻 新品发布 技术突破",
-                "{keyword} 社会新闻 民生热点 网友热议",
-                "{keyword} 国际新闻 海外动态 全球视野",
-                "{keyword} 体育新闻 赛事结果 运动员专访",
-                "{keyword} 娱乐新闻 明星动态 综艺资讯",
-                "{keyword} 教育新闻 政策调整 考试信息",
-                "{keyword} 健康新闻 养生知识 疾病预防"
-            ],
-            map: [
-                "{keyword} 位置导航 精准定位 路线规划",
-                "{keyword} 周边设施 餐饮/酒店/加油站 推荐",
-                "{keyword} 交通路线 公交/地铁/驾车 实时路况",
-                "{keyword} 卫星地图 高清实景 3D视图",
-                "{keyword} 景区地图 导览路线 景点介绍",
-                "{keyword} 城市地图 行政区划 详细标注",
-                "{keyword} 商圈地图 商场分布 品牌入驻",
-                "{keyword} 校园地图 教学楼/宿舍 位置查询",
-                "{keyword} 医院地图 科室分布 挂号指引",
-                "{keyword} 停车场地图 空位查询 收费标准"
-            ],
-            software: [
-                "{keyword} 官方下载 正版授权 安全无毒",
-                "{keyword} 破解版 免激活 永久使用",
-                "{keyword} 绿色版 免安装 解压即用",
-                "{keyword} 汉化版 中文界面 操作便捷",
-                "{keyword} 最新版 2025 更新日志 新功能",
-                "{keyword} 旧版本 经典版 适配低配置",
-                "{keyword} 手机版 iOS/Android 通用",
-                "{keyword} 插件 扩展功能 免费下载",
-                "{keyword} 教程 安装/使用/卸载 详细步骤",
-                "{keyword} 替代品 同类软件 对比推荐"
-            ],
-            default: [
-                "{keyword} - 综合搜索结果 涵盖网页/图片/视频等多维度信息",
-                "{keyword} 最新资讯 2025年热点事件 全方位解读",
-                "{keyword} 相关推荐 基于你的搜索习惯 精准推送",
-                "{keyword} 百科全书 完整知识库 一键查询",
-                "{keyword} 实用工具 在线计算/转换/查询 免费使用",
-                "{keyword} 热门讨论 网友观点 正反方分析",
-                "{keyword} 资源汇总 下载/观看/购买 一站式服务",
-                "{keyword} 专家解读 行业大咖 深度分析",
-                "{keyword} 学习资料 入门/进阶/精通 全套教程",
-                "{keyword} 生活指南 实用技巧 提升生活品质"
-            ]
-        };
-
-        // 随机拼音生成（用于词典分类）
-        function getRandomPinyin(keyword) {
-            const pinyinMap = {
-                '测试': 'cè shì',
-                '音乐': 'yīn yuè',
-                '图片': 'tú piàn',
-                '视频': 'shì pín',
-                '搜索': 'sōu suǒ',
-                '天气': 'tiān qì',
-                '美食': 'měi shí',
-                '旅游': 'lǚ yóu',
-                '学习': 'xué xí',
-                '工作': 'gōng zuò'
-            };
-            return pinyinMap[keyword] || 'mó nǐ pīn yīn';
-        }
 
         // ========== 初始化 ==========
         document.addEventListener('DOMContentLoaded', () => {
@@ -447,8 +263,6 @@
             initBackground();
             // 绑定事件监听
             bindEvents();
-            // 更新页面标题
-            updatePageTitle();
             // 如果URL有关键词，自动搜索
             if (currentKeyword) {
                 performSearch();
@@ -488,16 +302,6 @@
             window.history.pushState({}, '', newURL);
         }
 
-        // 更新页面标题
-        function updatePageTitle() {
-            let title = 'luhui jsearch 鲁虺聚搜百度 - 一站式多平台搜索鲁虺联合搜索引擎群 http://search.luhui.net 鲁虺群搜索|网页搜索|游戏搜索|音乐搜索|磁力搜索|影视搜索|软件搜索|图片搜索|新闻搜索|地图搜索|论坛搜索|小说搜索|Flash搜索|黄页搜索|企业文档搜索让你体验干净、安全、可信任的一站式搜索引擎！';
-            if (currentKeyword) {
-                const typeName = typeNameMap[currentType] || '默认首选';
-                title = `鲁虺聚搜百度 ${currentKeyword} ${typeName} - 一站式多平台搜索鲁虺联合搜索引擎群 http://search.luhui.net 鲁虺群搜索|网页搜索|游戏搜索|音乐搜索|磁力搜索|影视搜索|软件搜索|图片搜索|新闻搜索|地图搜索|论坛搜索|小说搜索|Flash搜索|黄页搜索|企业文档搜索让你体验干净、安全、可信任的一站式搜索引擎！`;
-            }
-            document.title = title;
-        }
-
         // ========== 搜索功能 ==========
         // 执行搜索
         function performSearch() {
@@ -512,18 +316,16 @@
             document.getElementById('resultsList').classList.remove('hidden');
             document.getElementById('pagination').classList.remove('hidden');
 
-            // 生成真实化搜索结果
-            generateRealisticResults();
+            // 生成模拟搜索结果（实际项目中替换为真实API请求）
+            generateMockResults();
             // 更新分页信息
             updatePagination();
             // 更新URL
             updateURLParams();
-            // 更新页面标题
-            updatePageTitle();
         }
 
-        // 生成真实化搜索结果（修复重复BUG）
-        function generateRealisticResults() {
+        // 生成模拟搜索结果
+        function generateMockResults() {
             const resultsList = document.getElementById('resultsList');
             resultsList.innerHTML = '';
 
@@ -531,52 +333,39 @@
             const typeDomains = {
                 default: 'https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&tn=luhuinet&wd=site:luhui.net ',
                 web: 'https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&tn=luhuinet&wd=',
-                music: 'http://music.163.com/search/?s=',
-                image: 'http://image.baidu.com/search/index?tn=baiduimage&word=',
-                video: 'https://www.baidu.com/sf/vsearch?pd=video&tn=vsearch&lid=luhui.net&ie=utf-8&wd=',
+                music: 'https://music.163.com/search/?s=',
+                image: 'https://image.baidu.com/search/index?tn=baiduimage&word=',
+                video: 'https://v.qq.com/x/search/?q=',
                 shopping: 'https://ai.taobao.com/search/index.htm?pid=mm_31320626_1851700286_110575400344&union_lens=recoveryid%3A201_11.11.105.189_5728_1614085897205%3Bprepvid%3A201_11.11.105.189_5728_1614085897205&key=',
-                dict: 'http://dict.baidu.com/s?wd=',
-                magnet: 'https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&tn=luhuinet&wd=magnet:?xt=urn:btih: ',
-                doc: 'http://wenku.baidu.com/search?word=',
-                news: 'http://news.baidu.com/search?tn=news&word=',
-                map: 'http://map.baidu.com/mobile/webapp/search/search/qt=s&wd=',
-                software: 'https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&tn=luhuinet&wd=index of '
+                dict: 'https://dict.baidu.com/s?wd=',
+                magnet: 'https://www.bing.com/search?q=',
+                doc: 'https://wenku.baidu.com/search?word=',
+                news: 'https://news.baidu.com/search?tn=news&word=',
+                map: 'https://map.baidu.com/mobile/webapp/search/search/qt=s&wd=',
+                software: 'https://pc.qq.com/search.html#!keyword='
             };
 
-            // 获取当前分类的模板
-            const templates = mockResultTemplates[currentType];
-            const domain = typeDomains[currentType];
-
-            // 生成结果项（每页10条不重复）
+            // 生成结果项
             for (let i = 0; i < PAGE_SIZE; i++) {
                 const itemIndex = (currentPage - 1) * PAGE_SIZE + i + 1;
-                const resultUrl = `${domain}${encodeURIComponent(currentKeyword)}&page=${currentPage}&index=${itemIndex}`;
+                const resultUrl = `${typeDomains[currentType]}${encodeURIComponent(currentKeyword)}&page=${currentPage}`;
                 const thumbnailUrl = `https://mini.s-shot.ru/1024x768/400/jpeg/?${resultUrl}`;
 
-                // 替换模板中的变量
-                let titleTemplate = templates[i];
-                titleTemplate = titleTemplate.replace(/{keyword}/g, currentKeyword);
-                titleTemplate = titleTemplate.replace(/{pinyin}/g, getRandomPinyin(currentKeyword));
-                
-                // 生成结果项DOM
                 const resultItem = document.createElement('div');
                 resultItem.className = 'flex flex-col md:flex-row gap-4 p-4 border rounded-lg result-card-hover';
                 
                 resultItem.innerHTML = `
                     <!-- 缩略图 -->
                     <div class="w-full md:w-48 h-32 bg-gray-100 rounded overflow-hidden flex-shrink-0">
-                        <img src="${thumbnailUrl}" alt="${currentKeyword} - 搜索结果 ${itemIndex}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/400x300?text=${encodeURIComponent(currentKeyword)}+${itemIndex}'">
+                        <img src="${thumbnailUrl}" alt="结果缩略图" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/400x300?text=暂无缩略图'">
                     </div>
                     <!-- 结果内容 -->
                     <div class="flex-1">
                         <h3 class="text-lg font-medium text-primary mb-1">
-                            <a href="${resultUrl}" target="_blank" class="hover:underline">${titleTemplate}</a>
+                            <a href="${resultUrl}" target="_blank" class="hover:underline">${currentKeyword} - 搜索结果 ${itemIndex}</a>
                         </h3>
                         <p class="text-secondary text-sm mb-2">${resultUrl}</p>
-                        <p class="text-gray-600">
-                            这是${typeNameMap[currentType]}下的第${currentPage}页第${i+1}条结果，包含「${currentKeyword}」的核心信息，
-                            数据来源：${domain.split('/')[0]}，更新时间：2025年${Math.floor(Math.random()*12)+1}月${Math.floor(Math.random()*28)+1}日。
-                        </p>
+                        <p class="text-gray-600">这是${currentType === 'default' ? '默认首选' : currentType}分类下的搜索结果描述，包含关键词「${currentKeyword}」的相关内容，第${currentPage}页第${i+1}条结果。</p>
                     </div>
                 `;
 
@@ -687,36 +476,24 @@
         }
 
         // ========== 天气预报功能 ==========
-        // 获取天气数据（使用稳定的接口）
-        async function getWeatherData() {
+        // 获取天气数据
+        async function getWeatherData(city = '北京') {
             try {
-                const response = await fetch(WEATHER_API);
+                const response = await fetch(`${WEATHER_API}${encodeURIComponent(city)}`);
                 const data = await response.json();
                 
-                if (data && data.weatherinfo) {
-                    renderWeatherData(data.weatherinfo);
+                if (data.success) {
+                    renderWeatherData(data.data);
                 } else {
                     document.getElementById('weatherLoading').innerHTML = '<p class="text-red-500">获取天气数据失败，请稍后重试</p>';
                 }
             } catch (error) {
                 console.error('天气API请求失败：', error);
-                // 备用接口（如果主接口失败）
-                try {
-                    const backupResponse = await fetch('https://api.oioweb.cn/api/weather/city?city=北京');
-                    const backupData = await backupResponse.json();
-                    if (backupData.code === 200) {
-                        renderBackupWeatherData(backupData.data);
-                    } else {
-                        document.getElementById('weatherLoading').innerHTML = '<p class="text-red-500">获取天气数据失败，请检查网络</p>';
-                    }
-                } catch (backupError) {
-                    console.error('备用天气API请求失败：', backupError);
-                    document.getElementById('weatherLoading').innerHTML = '<p class="text-red-500">获取天气数据失败，请检查网络</p>';
-                }
+                document.getElementById('weatherLoading').innerHTML = '<p class="text-red-500">获取天气数据失败，请检查网络</p>';
             }
         }
 
-        // 渲染主接口天气数据
+        // 渲染天气数据
         function renderWeatherData(weatherData) {
             const weatherContent = document.getElementById('weatherContent');
             document.getElementById('weatherLoading').classList.add('hidden');
@@ -745,111 +522,35 @@
                 <div class="text-center mb-4">
                     <h4 class="text-2xl font-bold">${weatherData.city}</h4>
                     <div class="flex items-center justify-center gap-3 mt-2">
-                        <i class="${getWeatherIcon(weatherData.weather)} text-4xl text-primary"></i>
+                        <i class="${getWeatherIcon(weatherData.type)} text-4xl text-primary"></i>
                         <div>
                             <p class="text-3xl font-bold">${weatherData.temp}°C</p>
-                            <p class="text-secondary">${weatherData.weather}</p>
+                            <p class="text-secondary">${weatherData.type}</p>
                         </div>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3 mt-4">
                     <div class="p-2 border rounded-lg text-center">
                         <p class="text-sm text-secondary">风向</p>
-                        <p class="font-medium">${weatherData.WD || '无数据'}</p>
+                        <p class="font-medium">${weatherData.fengxiang}</p>
                     </div>
                     <div class="p-2 border rounded-lg text-center">
                         <p class="text-sm text-secondary">风力</p>
-                        <p class="font-medium">${weatherData.WS || '无数据'}</p>
+                        <p class="font-medium">${weatherData.fengli}</p>
                     </div>
                     <div class="p-2 border rounded-lg text-center">
                         <p class="text-sm text-secondary">湿度</p>
-                        <p class="font-medium">${weatherData.SD || '无数据'}</p>
+                        <p class="font-medium">${weatherData.shidu}</p>
                     </div>
                     <div class="p-2 border rounded-lg text-center">
                         <p class="text-sm text-secondary">更新时间</p>
-                        <p class="font-medium">${new Date().toLocaleTimeString()}</p>
+                        <p class="font-medium">${weatherData.time}</p>
                     </div>
                 </div>
                 <div class="mt-4 p-3 bg-primary/5 rounded-lg">
-                    <p class="text-sm text-secondary">今日提示：${getWeatherTips(weatherData.weather, weatherData.temp)}</p>
+                    <p class="text-sm text-secondary">${weatherData.tips}</p>
                 </div>
             `;
-        }
-
-        // 渲染备用接口天气数据
-        function renderBackupWeatherData(weatherData) {
-            const weatherContent = document.getElementById('weatherContent');
-            document.getElementById('weatherLoading').classList.add('hidden');
-            weatherContent.classList.remove('hidden');
-
-            const weatherIcons = {
-                '晴': 'fas fa-sun',
-                '多云': 'fas fa-cloud',
-                '阴': 'fas fa-cloud-meatball',
-                '雨': 'fas fa-cloud-rain',
-                '雪': 'fas fa-snowflake',
-                '风': 'fas fa-wind',
-                '雷': 'fas fa-bolt'
-            };
-
-            function getWeatherIcon(text) {
-                for (const [key, icon] of Object.entries(weatherIcons)) {
-                    if (text.includes(key)) return icon;
-                }
-                return 'fas fa-cloud';
-            }
-
-            weatherContent.innerHTML = `
-                <div class="text-center mb-4">
-                    <h4 class="text-2xl font-bold">${weatherData.city}</h4>
-                    <div class="flex items-center justify-center gap-3 mt-2">
-                        <i class="${getWeatherIcon(weatherData.weather)} text-4xl text-primary"></i>
-                        <div>
-                            <p class="text-3xl font-bold">${weatherData.temperature}°C</p>
-                            <p class="text-secondary">${weatherData.weather}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-3 mt-4">
-                    <div class="p-2 border rounded-lg text-center">
-                        <p class="text-sm text-secondary">风向</p>
-                        <p class="font-medium">${weatherData.windDirection || '无数据'}</p>
-                    </div>
-                    <div class="p-2 border rounded-lg text-center">
-                        <p class="text-sm text-secondary">风力</p>
-                        <p class="font-medium">${weatherData.windPower || '无数据'}</p>
-                    </div>
-                    <div class="p-2 border rounded-lg text-center">
-                        <p class="text-sm text-secondary">湿度</p>
-                        <p class="font-medium">${weatherData.humidity || '无数据'}</p>
-                    </div>
-                    <div class="p-2 border rounded-lg text-center">
-                        <p class="text-sm text-secondary">更新时间</p>
-                        <p class="font-medium">${weatherData.updateTime || new Date().toLocaleTimeString()}</p>
-                    </div>
-                </div>
-                <div class="mt-4 p-3 bg-primary/5 rounded-lg">
-                    <p class="text-sm text-secondary">今日提示：${getWeatherTips(weatherData.weather, weatherData.temperature)}</p>
-                </div>
-            `;
-        }
-
-        // 生成天气提示语
-        function getWeatherTips(weather, temp) {
-            const tempNum = parseInt(temp);
-            if (weather.includes('晴')) {
-                return tempNum > 30 ? '今日晴天，气温较高，注意防晒补水' : '今日晴天，天气宜人，适合户外活动';
-            } else if (weather.includes('雨')) {
-                return '今日有雨，出门请带雨具，注意路滑';
-            } else if (weather.includes('雪')) {
-                return '今日有雪，气温较低，注意保暖和出行安全';
-            } else if (weather.includes('阴')) {
-                return '今日阴天，空气湿度较大，注意通风';
-            } else if (weather.includes('风')) {
-                return '今日风力较大，注意防风，高空作业需谨慎';
-            } else {
-                return tempNum < 10 ? '今日气温较低，注意添衣保暖' : '今日天气舒适，适合正常出行';
-            }
         }
 
         // ========== 事件绑定 ==========
@@ -886,7 +587,6 @@
                         performSearch();
                     } else {
                         updateURLParams();
-                        updatePageTitle();
                     }
                 });
             });
@@ -909,7 +609,7 @@
             // 天气预报弹窗
             document.getElementById('weatherBtn').addEventListener('click', () => {
                 document.getElementById('weatherModal').classList.remove('hidden');
-                getWeatherData(); // 获取天气数据
+                getWeatherData(); // 默认获取北京天气
             });
 
             document.getElementById('closeWeatherModal').addEventListener('click', () => {
